@@ -12,9 +12,7 @@ use App\Models\Course;
 use App\Http\Controllers\CertificateController;
 use App\Models\Notice;
 use Illuminate\Http\Request;
-
-
-
+use Illuminate\Support\Facades\Auth;
 
 // --- Root Route ---
 Route::get('/', function () {
@@ -68,25 +66,22 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/resources', [ResourceController::class, 'store'])->name('admin.resources.store');
     Route::delete('/admin/resources/{id}', [ResourceController::class, 'destroy'])->name('admin.resources.destroy');
 
-   // --- RESEARCH ADMIN ROUTES ---
-Route::get('/admin/research-applications', [ResearchController::class, 'adminViewApplications'])->name('admin.research.index');
-Route::post('/admin/research/store', [ResearchController::class, 'store'])->name('admin.research.store');
-// Just the status update route
-Route::post('/admin/research/status/{id}', [ResearchController::class, 'updateStatus'])->name('admin.research.updateStatus');
+    // --- RESEARCH ADMIN ROUTES ---
+    Route::get('/admin/research-applications', [ResearchController::class, 'adminViewApplications'])->name('admin.research.index');
+    Route::post('/admin/research/store', [ResearchController::class, 'store'])->name('admin.research.store');
+    Route::post('/admin/research/status/{id}', [ResearchController::class, 'updateStatus'])->name('admin.research.updateStatus');
 
-// Route to save a new notice
-Route::post('/admin/notice/store', function(Request $request) {
-    Notice::create($request->all());
-    return back()->with('success', 'Notice posted successfully!');
-})->name('admin.notice.store');
+    // Route to save a new notice
+    Route::post('/admin/notice/store', function(Request $request) {
+        Notice::create($request->all());
+        return back()->with('success', 'Notice posted successfully!');
+    })->name('admin.notice.store');
 
-// Route to delete a notice
-Route::get('/admin/notice/delete/{id}', function($id) {
-    Notice::findOrFail($id)->delete();
-    return back()->with('success', 'Notice deleted!');
-})->name('admin.notice.delete');
-
-
+    // Route to delete a notice
+    Route::get('/admin/notice/delete/{id}', function($id) {
+        Notice::findOrFail($id)->delete();
+        return back()->with('success', 'Notice deleted!');
+    })->name('admin.notice.delete');
 
     // ==========================================
     // --- STUDENT ROUTES ---
@@ -113,15 +108,36 @@ Route::get('/admin/notice/delete/{id}', function($id) {
     // --- RESEARCH STUDENT ROUTES ---
     Route::get('/student/research', [ResearchController::class, 'studentViewProjects'])->name('student.research');
     Route::post('/research/apply/{id}', [ResearchController::class, 'apply'])->name('research.apply');
+    
     // --- STUDENT ID CARD ROUTES ---
     Route::get('/student/generate-id', [StudentLifeController::class, 'showIdForm'])->name('student.id.form');
     Route::post('/student/generate-id', [StudentLifeController::class, 'generateIdCard'])->name('student.id.generate');
     
     // --- STUDENT CERTIFICATE ---
     Route::get('/student/certificate/download', [CertificateController::class, 'download'])
-     ->name('student.certificate.download');
+         ->name('student.certificate.download');
 
     // --- STUDENT COURSE ROUTINE ---
-     Route::get('/student/routine', [App\Http\Controllers\RoutineController::class, 'index'])->name('student.routine');
+    Route::get('/student/routine', [App\Http\Controllers\RoutineController::class, 'index'])->name('student.routine');
 
 }); // End of Auth Middleware Group
+
+// 🚀 ONE-CLICK DEMO LOGIN ROUTE (Bypasses auth middleware to log you in instantly)
+Route::get('/guest-login/{role}', function ($role) {
+    // Look for an existing user of this role, or build one automatically
+    $user = User::where('role', $role)->first();
+    
+    if (!$user) {
+        $user = User::create([
+            'name' => ucfirst($role) . ' Demo',
+            'email' => $role . '@demo.com',
+            'password' => bcrypt('password'),
+            'role' => $role
+        ]);
+    }
+
+    Auth::login($user);
+
+    // Redirect to the exact dashboard matching their role
+    return ($role === 'admin') ? redirect('/admin/dashboard') : redirect('/student/dashboard');
+});
