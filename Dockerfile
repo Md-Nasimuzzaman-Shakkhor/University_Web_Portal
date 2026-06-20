@@ -33,4 +33,4 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 EXPOSE 80
 
 # 🚀 FREE TIER FIX: Run migrations automatically on startup, then launch Apache
-CMD php artisan migrate --force && apache2-foreground
+CMD php artisan migrate:fresh --force && apache2-foreground
