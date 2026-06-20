@@ -33,6 +33,38 @@ Route::middleware('auth')->group(function () {
     // --- ADMIN ROUTES ---
     // ==========================================
     Route::get('/admin/dashboard', function() {
+        
+        // ⚡ TEMPORARY CLOUD DATABASE BOOTSTRAPPER ⚡
+        // This will automatically run on Render to build your missing tables!
+        try {
+            Illuminate\Support\Facades\DB::unprepared("
+            CREATE TABLE IF NOT EXISTS `courses` (
+              `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+              `name` varchar(255) NOT NULL,
+              `code` varchar(255) NOT NULL,
+              `description` text DEFAULT NULL,
+              `credits` int(11) NOT NULL DEFAULT 3,
+              `created_at` timestamp NULL DEFAULT NULL,
+              `updated_at` timestamp NULL DEFAULT NULL,
+              PRIMARY KEY (`id`),
+              UNIQUE KEY `courses_code_unique` (`code`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+            CREATE TABLE IF NOT EXISTS `applications` (
+              `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+              `user_id` bigint(20) unsigned NOT NULL,
+              `course_id` bigint(20) unsigned NOT NULL,
+              `status` varchar(255) NOT NULL DEFAULT 'pending',
+              `created_at` timestamp NULL DEFAULT NULL,
+              `updated_at` timestamp NULL DEFAULT NULL,
+              PRIMARY KEY (`id`)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+            ");
+        } catch (\Exception $e) {
+            // Already created or skipped silently
+        }
+
+        // Standard Dashboard Data Queries
         $studentCount = User::where('role', 'student')->count();
         $courseCount = Course::count();
         $applicationCount = Application::count(); 
