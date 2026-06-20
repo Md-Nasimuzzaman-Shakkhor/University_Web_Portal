@@ -14,6 +14,8 @@ use App\Models\Notice;
 use Illuminate\Http\Request;
 
 
+
+
 // --- Root Route ---
 Route::get('/', function () {
     return redirect('/login'); 
