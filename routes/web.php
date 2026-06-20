@@ -122,22 +122,27 @@ Route::middleware('auth')->group(function () {
 
 }); // End of Auth Middleware Group
 
-// 🚀 ONE-CLICK DEMO LOGIN ROUTE (Bypasses auth middleware to log you in instantly)
+// 🚀 ONE-CLICK DEMO LOGIN ROUTE (Uses your exact phpMyAdmin SQL records!)
 Route::get('/guest-login/{role}', function ($role) {
-    // Look for an existing user of this role, or build one automatically
-    $user = User::where('role', $role)->first();
+    // 1. Map 'admin' or 'student' to the exact emails inside your imported SQL file
+    $email = ($role === 'admin') ? 'admin@test.com' : 'student@test.com';
+
+    // 2. Find that exact user from your database
+    $user = User::where('email', $email)->first();
     
+    // 3. If they don't exist yet, build them using the correct credentials fallback
     if (!$user) {
         $user = User::create([
-            'name' => ucfirst($role) . ' Demo',
-            'email' => $role . '@demo.com',
+            'name' => ucfirst($role) . ' User',
+            'email' => $email,
             'password' => bcrypt('password'),
             'role' => $role
         ]);
     }
 
+    // 4. Authenticate the session
     Auth::login($user);
 
-    // Redirect to the exact dashboard matching their role
+    // 5. Send them straight into their proper home dashboards
     return ($role === 'admin') ? redirect('/admin/dashboard') : redirect('/student/dashboard');
 });
