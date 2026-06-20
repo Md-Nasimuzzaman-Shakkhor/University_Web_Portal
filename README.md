@@ -4,6 +4,38 @@ A comprehensive, full-stack Academic & Institutional Management System built usi
 
 ---
 
+## 📸 System Interface Showcase
+
+### 🔑 Authentication Gate & Fast-Pass Switcher
+Implements secure, state-managed user sessions with custom redirect routing based on database roles.
+![Login Screen](screenshots/login.png)
+
+### 📊 Admin Command Center
+The main administrative dashboard showing real-time student trends, pending intakes, and faculty distributions.
+![Admin Dashboard](screenshots/admin.png)
+
+### 🎓 Student Cockpit Overview
+The core workspace for students to track their portal status, official documents, and institutional announcements.
+![Student Dashboard](screenshots/student.png)
+
+### 📝 Admissions & Enrollment Form
+Interactive registration engine where student candidates apply for upcoming university terms.
+![Admissions Portal](screenshots/admission.png)
+
+### 📚 Learning Resources Hub
+The repository where users search, stream, and download course slide decks and academic material.
+![Resources View](screenshots/resources.png)
+
+### 🔬 Research Desk Management
+Administrative panel for broadcasting research projects and managing incoming student applications.
+![Research Desk](screenshots/AdminResearch.png)
+
+### 📰 Student Life Studio
+The campus social feed center for publishing announcements, event highlights, and club updates.
+![Student Life Studio](screenshots/adminStudentLife.png)
+
+---
+
 ## 🛠️ System Core Features
 
 ### 🔐 1. Multi-Role Authentication Gates
