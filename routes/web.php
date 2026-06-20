@@ -35,7 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/dashboard', function() {
         
         // ⚡ TEMPORARY CLOUD DATABASE BOOTSTRAPPER ⚡
-        // This will automatically run on Render to build your missing tables!
+        // This will automatically run on Render to build missing tables and fix column errors!
         try {
             Illuminate\Support\Facades\DB::unprepared("
             CREATE TABLE IF NOT EXISTS `courses` (
@@ -59,6 +59,11 @@ Route::middleware('auth')->group(function () {
               `updated_at` timestamp NULL DEFAULT NULL,
               PRIMARY KEY (`id`)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+            ");
+
+            // 🚀 AUTOMATIC FIX: Ensure the course_id column exists on the users table
+            Illuminate\Support\Facades\DB::unprepared("
+                ALTER TABLE `users` ADD COLUMN IF NOT EXISTS `course_id` bigint(20) unsigned NULL AFTER `role`;
             ");
         } catch (\Exception $e) {
             // Already created or skipped silently
