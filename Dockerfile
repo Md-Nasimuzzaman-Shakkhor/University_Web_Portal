@@ -32,5 +32,5 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 # Expose the default web port
 EXPOSE 80
 
-# 🚀 FREE TIER FIX: Run migrations automatically on startup, then launch Apache
-CMD php artisan migrate:fresh --force && apache2-foreground
+# 🚀 CACHE PURGE & FRESH BOOT ENGINE
+CMD php artisan config:clear && php artisan route:clear && php artisan view:clear && php artisan migrate:fresh --force && apache2-foreground
